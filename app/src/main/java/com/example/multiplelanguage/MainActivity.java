@@ -1,5 +1,7 @@
 package com.example.multiplelanguage;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -91,9 +93,9 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             // Handle the camera action
-            setLocale("ar");
+            languageDialog();
         } else if (id == R.id.nav_gallery) {
-            setLocale("en");
+
         } else if (id == R.id.nav_slideshow) {
 
         } else if (id == R.id.nav_manage) {
@@ -109,21 +111,41 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    void languageDialog() {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+        alertDialog.setTitle("Language");
+        alertDialog.setMessage("Choose Language");
+        alertDialog.setPositiveButton("English", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                setLocale("en");
+                _intent = new Intent(MainActivity.this, MainActivity.class);
+                _intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(_intent);
+                finish();
+                dialog.cancel();
+            }
+        });
+
+        alertDialog.setNegativeButton("Arabic", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                setLocale("ar");
+                _intent = new Intent(MainActivity.this, MainActivity.class);
+                _intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(_intent);
+                finish();
+                dialog.cancel();
+            }
+        });
+
+        alertDialog.show();
+    }
+
     private void setLocale(String ar) {
         Locale locale = new Locale(ar);
         Locale.setDefault(locale);
         Configuration config = new Configuration();
         config.locale = locale;
         getResources().updateConfiguration(config, getResources().getDisplayMetrics());
-
-//        if (getIntent().getStringExtra("opener") != null) {
-//            _intent = new Intent(MainActivity.this, MainActivity.class);
-//        } else {
-//            _intent = new Intent(MainActivity.this, MainActivity.class);
-//        }
-        _intent = new Intent(MainActivity.this, MainActivity.class);
-        _intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(_intent);
-        finish();
+        PrefManager.setLanguage(MainActivity.this, ar);
     }
 }
